@@ -1,0 +1,2 @@
+model,test_accuracy,macro_f1,weighted_f1,test_size,num_classes,num_features
+TF-IDF + Logistic Regression,0.8121827411167513,0.6461323934445484,0.8115032681129901,197,8,5000

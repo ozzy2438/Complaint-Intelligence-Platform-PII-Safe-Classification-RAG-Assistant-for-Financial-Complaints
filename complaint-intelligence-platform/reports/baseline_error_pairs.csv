@@ -1,0 +1,19 @@
+true_label,predicted_label,count
+Credit card,Checking or savings account,7
+Checking or savings account,"Money transfer, virtual currency, or money service",4
+"Money transfer, virtual currency, or money service",Checking or savings account,3
+"Payday loan, title loan, personal loan, or advance loan",Mortgage,3
+Checking or savings account,Credit reporting or other personal consumer reports,3
+Debt collection,Mortgage,3
+Checking or savings account,Credit card,2
+Debt collection,Checking or savings account,2
+Vehicle loan or lease,Credit card,1
+"Payday loan, title loan, personal loan, or advance loan",Debt collection,1
+"Money transfer, virtual currency, or money service",Mortgage,1
+Debt collection,Credit reporting or other personal consumer reports,1
+Debt collection,Vehicle loan or lease,1
+Debt collection,Credit card,1
+Credit reporting or other personal consumer reports,Vehicle loan or lease,1
+Credit card,"Payday loan, title loan, personal loan, or advance loan",1
+Credit card,Mortgage,1
+Vehicle loan or lease,"Payday loan, title loan, personal loan, or advance loan",1
