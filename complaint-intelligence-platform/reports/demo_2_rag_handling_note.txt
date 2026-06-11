@@ -1,0 +1,17 @@
+1. Complaint context:
+The complainant visited a Wells Fargo branch to close a credit card account they did not initially request but was offered to fund a septic tank repair. After paying off the loan, they experienced difficulty closing the account, requiring multiple calls and providing extensive personal information (full Social Security number, birthdate, name) to various representatives. The complainant is concerned about the bank’s verification practices and the potential exposure of sensitive personal information to multiple staff members.
+
+2. Relevant RG 271 guidance:
+- RG 271.53 and RG 271.84(a): The IDR response must clearly communicate the final outcome of the complaint and the complainant’s right to escalate to AFCA.
+- RG 271.55: The level of detail in the IDR response should be appropriate to the complaint’s complexity and must not breach privacy or legislative obligations.
+- No direct RG 271 guidance addresses verification procedures or data minimization in customer identity verification during account closure.
+
+3. Suggested handling considerations:
+- Acknowledge the complainant’s concerns about privacy and the extent of personal information requested during account closure.
+- Explain the bank’s current identity verification procedures and any regulatory or internal policy reasons for requiring detailed information.
+- Consider whether the bank’s practices align with privacy best practices and whether improvements could be recommended.
+- Provide a clear, respectful IDR response outlining the investigation outcome and the complainant’s right to escalate to AFCA.
+- Avoid disclosing sensitive internal security details that could compromise privacy or security.
+
+4. Human review flag:
+Human review is required to assess the appropriateness of the bank’s identity verification procedures and to draft a compliant and privacy-conscious IDR response.

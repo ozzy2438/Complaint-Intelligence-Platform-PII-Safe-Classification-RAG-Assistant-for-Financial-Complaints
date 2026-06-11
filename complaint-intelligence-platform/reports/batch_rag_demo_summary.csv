@@ -1,0 +1,4 @@
+demo_id,label,top_rg_refs,top_titles,note_chars
+demo_1,Debt collection,"['RG 271.49', 'RG 271.50']; ['RG 271.90']; ['RG 271.22', 'RG 271.106']",Overview of maximum IDR timeframes and response requirements | Purpose of enforcement action restrictions and reasonable time period | Contents of the Guide Regarding IDR and AFCA Interaction,1463
+demo_2,Credit card,"['RG 271.91']; ['RG 271.53', 'RG 271.84(a)']; ['RG 271.55']",Exceptions and procedures for credit-related hardship complaints | Contents of an IDR response | Level of detail and privacy considerations in IDR responses,1884
+demo_3,Checking or savings account,['RG 271.59']; ['RG 271.77']; ['RG 271.76'],Different timeframes for traditional trustee complaints | Suspension of IDR timeframe during legal proceedings or court directions | Traditional trustee obligations during 45 calendar day IDR timeframe,1775

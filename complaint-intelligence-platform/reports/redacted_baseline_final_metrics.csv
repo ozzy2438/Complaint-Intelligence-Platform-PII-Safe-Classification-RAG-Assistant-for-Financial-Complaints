@@ -1,0 +1,2 @@
+model,test_accuracy,macro_f1,weighted_f1,test_size,num_classes,num_features
+TF-IDF + Logistic Regression on redacted_text,0.8121827411167513,0.64354553045556,0.8085724436831754,197,8,5000

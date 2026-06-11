@@ -1,0 +1,3 @@
+timestamp,customer_id,input_hash,predicted_label,classification_confidence,retrieved_rg_refs,human_review_required,model_name
+2026-06-11T07:46:57.028432+00:00,demo_customer_001,b3c5ba371425010bdc6755a8e21552330bf723ac18c364efb06c2f57a541afa8,PENDING_CLASSIFICATION_MODEL,0.0,"['RG 271.90'] | ['RG 271.49', 'RG 271.50'] | ['RG 271.111'] | ['RG 271.86'] | ['RG 271.22', 'RG 271.106']",True,gpt-4.1-mini
+2026-06-11T08:00:10.445983+00:00,demo_customer_001,b3c5ba371425010bdc6755a8e21552330bf723ac18c364efb06c2f57a541afa8,PENDING_CLASSIFICATION_MODEL,0.0,"['RG 271.90'] | ['RG 271.49', 'RG 271.50'] | ['RG 271.111'] | ['RG 271.86'] | ['RG 271.22', 'RG 271.106']",True,gpt-4.1-mini

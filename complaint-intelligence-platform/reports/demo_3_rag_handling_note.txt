@@ -1,0 +1,17 @@
+1. Complaint context:
+The complainant, now the Trustee of a Revocable Trust, alleges that Bank of America began charging a $25 monthly fee on the trust account after the stepfather’s death, despite assurances there would be no charges. The complainant contends this fee was not properly communicated and considers it elder abuse. The bank’s Customer Service Department denied the complaint after review.
+
+2. Relevant RG 271 guidance:
+- RG 271.75 and RG 271.56 specify that traditional trustee complaints must receive an Internal Dispute Resolution (IDR) response within 45 calendar days of receipt.
+- RG 271.76 requires the trustee to identify and notify other interested parties (e.g., beneficiaries) and consider their views during the IDR process.
+- RG 271.77 allows suspension of the IDR timeframe if legal proceedings or court directions relevant to the complaint are initiated.
+
+3. Suggested handling considerations:
+- Confirm the complaint is classified as a traditional trustee complaint and ensure the 45-day IDR timeframe is adhered to.
+- Verify whether other beneficiaries or interested parties have been identified and notified as per RG 271.76.
+- Review the communication history regarding the fee changes to assess whether proper notice was provided.
+- Consider the complainant’s allegation of elder abuse carefully, noting that regulatory guidance does not address this directly; escalate if necessary.
+- If legal proceedings or court directions are involved, consider suspending the IDR timeframe accordingly.
+
+4. Human review flag:
+Human review is required to assess the elder abuse allegation, verify the adequacy of fee change notifications, and determine appropriate next steps given the complexity of trustee obligations and potential legal implications.

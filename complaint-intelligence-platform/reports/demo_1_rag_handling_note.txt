@@ -1,0 +1,19 @@
+Internal Complaint Handling Note
+
+1. Complaint Context:
+The complainant requests validation of an alleged debt, specifically seeking the original creditor’s name, total amount owed, documentation proving their responsibility for the debt, and evidence that the company is authorized to collect it.
+
+2. Relevant RG 271 Guidance:
+- RG 271.49 and RG 271.50 emphasize timely acknowledgement and comprehensive IDR responses to complaints.
+- RG 271.86 requires an IDR response within 21 calendar days for complaints involving default notices.
+- RG 271.90 highlights the importance of dealing with complaints genuinely within a reasonable timeframe to allow escalation to AFCA if unresolved.
+- RG 271.111 mandates informing complainants of their right to escalate unresolved complaints to AFCA and providing access details.
+
+3. Suggested Handling Considerations:
+- Acknowledge the complaint promptly.
+- Provide a detailed IDR response within 21 calendar days, including all requested validation information about the debt.
+- Ensure the response is clear, transparent, and addresses each element of the complainant’s request.
+- Inform the complainant of their right to escalate the complaint to AFCA if unsatisfied with the IDR outcome, including how to contact AFCA.
+
+4. Human Review Flag:
+Human review is required to verify the completeness and accuracy of the debt validation documentation before issuing the response and to ensure compliance with RG 271 requirements.

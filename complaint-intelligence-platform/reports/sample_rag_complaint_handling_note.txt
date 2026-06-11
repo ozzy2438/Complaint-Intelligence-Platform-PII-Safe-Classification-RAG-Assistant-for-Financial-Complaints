@@ -1,0 +1,21 @@
+Internal Complaint Handling Note
+
+1. Complaint Context:
+The complainant disputes a towing/storage deficiency balance allegedly owed to a third party. They raise concerns about improper notice due to mailing errors, lack of adequate documentation supporting the debt and lien sale process, absence of contemporaneous storage records and accounting, and unsubstantiated interest charges. The complainant asserts the debt is disputed in full and that collection efforts continue despite unresolved issues.
+
+2. Relevant RG 271 Guidance:
+- RG 271.30: The complainant’s expression of dissatisfaction and dispute triggers the firm’s obligation to handle the matter as a complaint under Internal Dispute Resolution (IDR) requirements.
+- RG 271.53 and RG 271.84(a): The firm must provide a comprehensive IDR response addressing the complaint’s substance, including reasons for any rejection or partial rejection, and inform the complainant of their right to escalate to AFCA.
+- RG 271.90: Enforcement action should be restricted to allow genuine resolution at IDR and provide reasonable time for escalation if unresolved.
+- RG 271.116: If hardship or enforcement postponement is involved, interest and default charges may continue, but referral to AFCA may be necessary with complainant consent.
+
+3. Suggested Handling Considerations:
+- Verify the accuracy of mailing and notice procedures to address lawful notice concerns.
+- Request or review all relevant documentation supporting the debt, including lien sale procedures, storage records, accounting ledgers, and basis for interest charges.
+- Assess whether collection efforts comply with commercial reasonableness and regulatory expectations.
+- Provide a clear, detailed IDR response that addresses each disputed issue and informs the complainant of their AFCA escalation rights.
+- Consider whether enforcement actions should be paused pending resolution.
+- Obtain complainant consent if referral to AFCA is appropriate.
+
+4. Human Review Flag:
+Human review is required to evaluate the adequacy of documentation provided by the collector, assess compliance with notice and commercial reasonableness standards, and determine appropriate enforcement and escalation steps.

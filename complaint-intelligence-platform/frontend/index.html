@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Complaint Intelligence Platform — Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body {
+    background-color: #050505;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,255,255,0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(255,255,255,0.04), transparent);
+    min-height: 100vh;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 100%);
+  }
+  .glass {
+    background: linear-gradient(160deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018));
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(14px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 20px 50px -24px rgba(0,0,0,0.9);
+  }
+  .glass-deep {
+    background: linear-gradient(165deg, rgba(255,255,255,0.04), rgba(0,0,0,0.25));
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 30px 60px -30px rgba(0,0,0,0.95);
+  }
+  .chip {
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.05);
+  }
+  #pipeline { perspective: 900px; }
+  .node {
+    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    transform-style: preserve-3d;
+    transform: rotateX(14deg);
+    box-shadow: 0 14px 24px -14px rgba(0,0,0,0.8);
+  }
+  .node.active {
+    border-color: rgba(255,255,255,0.55);
+    background: linear-gradient(160deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03));
+    box-shadow: 0 0 34px -6px rgba(255,255,255,0.4), 0 24px 36px -18px rgba(0,0,0,0.9);
+    transform: rotateX(0deg) translateZ(26px) translateY(-4px);
+  }
+  .node.done {
+    transform: rotateX(6deg) translateZ(8px);
+  }
+  .node.done {
+    border-color: rgba(255,255,255,0.3);
+  }
+  .node.done .node-dot { background: #fff; }
+
+  /* ---------- 3D tilt cards ---------- */
+  .tilt {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+    will-change: transform;
+  }
+  .tilt::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      460px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255,255,255,0.09),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .tilt:hover::after { opacity: 1; }
+
+  /* ---------- 3D wireframe cubes ---------- */
+  .cube-scene {
+    position: absolute;
+    perspective: 700px;
+    pointer-events: none;
+  }
+  .cube-float { animation: bob 7s ease-in-out infinite; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+  .cube {
+    position: relative;
+    width: var(--s);
+    height: var(--s);
+    transform-style: preserve-3d;
+    animation: spin-cube 26s linear infinite;
+  }
+  @keyframes spin-cube {
+    from { transform: rotateX(-22deg) rotateY(0deg); }
+    to   { transform: rotateX(-22deg) rotateY(360deg); }
+  }
+  .cube .face {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.015);
+    box-shadow: 0 0 24px -10px rgba(255,255,255,0.18) inset;
+  }
+  .cube .f1 { transform: translateZ(calc(var(--s) / 2)); }
+  .cube .f2 { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+  .cube .f3 { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+  .cube .f4 { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+  .cube .f5 { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+  .cube .f6 { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+  .node.active .node-dot {
+    background: #fff;
+    animation: pulse-dot 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+  }
+  .connector {
+    background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+  }
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+  .fade-up { animation: fadeUp 0.55s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .expand-icon { transform: rotate(45deg); }
+  .expand-icon { transition: transform 0.25s ease; }
+  textarea::placeholder { color: rgba(255,255,255,0.25); }
+  ::selection { background: rgba(255,255,255,0.85); color: #000; }
+  .btn-primary {
+    background: #fff; color: #000;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 30px -10px rgba(255,255,255,0.4);
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 10px 36px -8px rgba(255,255,255,0.55);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-ghost {
+    border: 1px solid rgba(255,255,255,0.16);
+    transition: all 0.2s ease;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.07); }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+</style>
+</head>
+<body class="text-neutral-200 font-sans antialiased">
+
+<div class="grid-bg fixed inset-0 pointer-events-none"></div>
+
+<!-- Floating 3D wireframe cubes -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+  <div class="cube-scene hidden md:block" style="top: 9%; left: 5%;">
+    <div class="cube-float">
+      <div class="cube" style="--s: 110px; animation-duration: 30s;">
+        <div class="face f1"></div><div class="face f2"></div><div class="face f3"></div>
+        <div class="face f4"></div><div class="face f5"></div><div class="face f6"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cube-scene hidden md:block" style="top: 16%; right: 7%;">
+    <div class="cube-float" style="animation-delay: -3s;">
+      <div class="cube" style="--s: 70px; animation-duration: 20s; animation-direction: reverse;">
+        <div class="face f1"></div><div class="face f2"></div><div class="face f3"></div>
+        <div class="face f4"></div><div class="face f5"></div><div class="face f6"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cube-scene hidden lg:block" style="bottom: 12%; left: 10%;">
+    <div class="cube-float" style="animation-delay: -5s;">
+      <div class="cube" style="--s: 48px; animation-duration: 16s;">
+        <div class="face f1"></div><div class="face f2"></div><div class="face f3"></div>
+        <div class="face f4"></div><div class="face f5"></div><div class="face f6"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="relative max-w-7xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+
+  <!-- ============ 1. HERO / HEADER ============ -->
+  <header class="text-center mb-12">
+    <div class="inline-flex items-center gap-2 chip rounded-full px-4 py-1.5 text-[11px] font-medium tracking-widest uppercase text-neutral-400 mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+      Internal Compliance Demo — Not Production
+    </div>
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-800 font-extrabold tracking-tight text-white">
+      Complaint Intelligence Platform
+    </h1>
+    <p class="mt-4 text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto font-light">
+      PII-safe classification and RG 271 RAG assistant for financial complaint triage.
+    </p>
+    <div class="mt-7 flex flex-wrap justify-center gap-2.5">
+      <span class="chip rounded-full px-4 py-1.5 text-xs font-medium text-neutral-300">PII Redaction</span>
+      <span class="chip rounded-full px-4 py-1.5 text-xs font-medium text-neutral-300">Classification</span>
+      <span class="chip rounded-full px-4 py-1.5 text-xs font-medium text-neutral-300">RG 271 Retrieval</span>
+      <span class="chip rounded-full px-4 py-1.5 text-xs font-medium text-neutral-300">Human Review</span>
+      <span class="chip rounded-full px-4 py-1.5 text-xs font-medium text-neutral-300">Audit Log</span>
+    </div>
+  </header>
+
+  <div class="grid lg:grid-cols-[1fr_300px] gap-6">
+
+    <!-- ============ MAIN COLUMN ============ -->
+    <main class="space-y-6 min-w-0">
+
+      <!-- ============ 2. COMPLAINT INPUT PANEL ============ -->
+      <section class="glass tilt rounded-2xl p-6 sm:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-semibold tracking-widest uppercase text-neutral-400">Complaint Input</h2>
+          <button id="btn-sample" class="btn-ghost rounded-lg px-3.5 py-1.5 text-xs font-medium text-neutral-300">
+            Load Sample Complaint
+          </button>
+        </div>
+        <textarea id="complaint-input" rows="6"
+          class="w-full rounded-xl bg-black/40 border border-white/10 focus:border-white/40 focus:ring-0 outline-none p-4 text-sm leading-relaxed text-neutral-100 resize-y scrollbar-thin"
+          placeholder="Paste a consumer complaint narrative here…"></textarea>
+        <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+          <p class="text-[11px] text-neutral-500 font-mono">customer_id: demo_customer_001 · min 20 chars · do not paste real PII</p>
+          <button id="btn-analyze" class="btn-primary rounded-xl px-7 py-3 text-sm font-semibold">
+            Analyze Complaint
+          </button>
+        </div>
+        <div id="error-banner" class="hidden mt-4 rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-neutral-300"></div>
+      </section>
+
+      <!-- ============ 3. PIPELINE VISUALIZATION ============ -->
+      <section class="glass rounded-2xl p-6 sm:p-7">
+        <h2 class="text-sm font-semibold tracking-widest uppercase text-neutral-400 mb-5">Processing Pipeline</h2>
+        <div id="pipeline" class="flex items-stretch gap-0 overflow-x-auto scrollbar-thin pb-2">
+          <!-- nodes injected by JS -->
+        </div>
+      </section>
+
+      <!-- ============ 4. OUTPUT DASHBOARD ============ -->
+      <section id="results" class="hidden space-y-6">
+
+        <!-- E. Human review banner -->
+        <div class="fade-up rounded-2xl border border-white/30 bg-white/[0.07] px-5 py-4 flex items-center gap-4">
+          <div class="shrink-0 w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white font-bold">!</div>
+          <div>
+            <p class="text-sm font-semibold text-white">Human review required before any final decision or customer response.</p>
+            <p class="text-xs text-neutral-400 mt-0.5">This output is assistive only. It is not a determination, legal advice, or a customer-facing message.</p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- A. Classification card -->
+          <div class="glass-deep tilt rounded-2xl p-6 fade-up">
+            <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-4">Classification</h3>
+            <p class="text-[11px] text-neutral-500 mb-1">Predicted label</p>
+            <p id="out-label" class="font-mono text-lg text-white break-words">—</p>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-[11px] text-neutral-500 mb-1">Confidence</p>
+                <p id="out-confidence" class="font-mono text-base text-neutral-200">—</p>
+              </div>
+              <div>
+                <p class="text-[11px] text-neutral-500 mb-1">Status</p>
+                <p id="out-status" class="text-sm text-neutral-200">—</p>
+              </div>
+            </div>
+            <p id="out-pending-note" class="hidden mt-4 text-xs text-neutral-400 border border-white/10 rounded-lg px-3 py-2 bg-black/30">
+              Classification model connection pending
+            </p>
+          </div>
+
+          <!-- B. RG 271 references -->
+          <div class="glass-deep tilt rounded-2xl p-6 fade-up">
+            <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-4">Retrieved RG 271 References</h3>
+            <div id="out-refs" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <!-- C. Retrieved context cards -->
+        <div class="glass rounded-2xl p-6 sm:p-7 fade-up">
+          <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-5">Retrieved Context — Top Chunks</h3>
+          <div id="out-context" class="space-y-3"></div>
+        </div>
+
+        <!-- D. Internal handling note -->
+        <div class="glass rounded-2xl p-6 sm:p-8 fade-up">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-400">Internal Handling Note</h3>
+            <span class="chip rounded-full px-3 py-1 text-[10px] font-mono text-neutral-400">INTERNAL — COMPLIANCE MEMO</span>
+          </div>
+          <div class="rounded-xl bg-[#0b0b0b] border border-white/10 p-6 sm:p-8 shadow-inner">
+            <div class="border-b border-white/10 pb-4 mb-5 grid sm:grid-cols-3 gap-2 text-[11px] font-mono text-neutral-500">
+              <span>FROM: Complaint Intelligence Assistant</span>
+              <span>TO: Complaints Handling Team</span>
+              <span id="memo-date">DATE: —</span>
+            </div>
+            <div id="out-note" class="text-sm leading-7 text-neutral-200 whitespace-pre-wrap font-light"></div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- ============ 5. AUDITABILITY PANEL ============ -->
+    <aside class="lg:sticky lg:top-8 self-start">
+      <div class="glass-deep tilt rounded-2xl p-6 space-y-5">
+        <h2 class="text-xs font-semibold tracking-widest uppercase text-neutral-400">Auditability</h2>
+
+        <div>
+          <p class="text-[11px] text-neutral-500 mb-1">Timestamp (UTC)</p>
+          <p id="audit-ts" class="font-mono text-xs text-neutral-200 break-all">—</p>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-neutral-500 mb-1">Input preview</p>
+          <p id="audit-preview" class="text-xs text-neutral-300 leading-relaxed line-clamp-4">—</p>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-neutral-500 mb-1">Model used</p>
+          <p class="font-mono text-xs text-neutral-200">gpt-4.1-mini · all-MiniLM-L6-v2</p>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-neutral-500 mb-1">Audit log status</p>
+          <p id="audit-status" class="text-xs text-neutral-300 flex items-center gap-2">
+            <span id="audit-dot" class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
+            <span id="audit-status-text">Idle — no event logged</span>
+          </p>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-neutral-500 mb-1">Input hash (SHA-256)</p>
+          <p id="audit-hash" class="font-mono text-[10px] text-neutral-400 break-all leading-relaxed">—</p>
+        </div>
+
+        <div class="border-t border-white/10 pt-4 space-y-2.5">
+          <p class="text-[11px] text-neutral-400 flex gap-2">
+            <span class="text-white">✓</span> Raw complaint is <span class="font-semibold text-neutral-200">not stored</span> in the audit log
+          </p>
+          <p class="text-[11px] text-neutral-400 flex gap-2">
+            <span class="text-white">✓</span> One-way input hash enables traceability without PII retention
+          </p>
+          <p class="text-[11px] text-neutral-400 flex gap-2">
+            <span class="text-white">✓</span> Every analysis event appended to <span class="font-mono">api_audit_log.csv</span>
+          </p>
+          <p class="text-[11px] text-neutral-400 flex gap-2">
+            <span class="text-white">✓</span> Human-in-the-loop review enforced on all outputs
+          </p>
+        </div>
+      </div>
+
+      <p class="text-center text-[10px] text-neutral-600 mt-5 font-mono">
+        FastAPI · ChromaDB · SentenceTransformers · OpenAI<br/>Portfolio demo — internal triage assistant, not a chatbot
+      </p>
+    </aside>
+  </div>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+
+const SAMPLE_COMPLAINT =
+  "I am disputing a debt collection account. The collector has not provided documents proving that I owe the debt, and they continue to contact me despite my dispute.";
+
+const PIPELINE_STEPS = [
+  "Complaint Text",
+  "PII Redaction",
+  "Classification",
+  "Chroma Retrieval",
+  "RG 271 Context",
+  "Handling Note",
+  "Human Review",
+];
+
+const el = (id) => document.getElementById(id);
+
+// ---------- Pipeline rendering ----------
+function renderPipeline() {
+  const container = el("pipeline");
+  container.innerHTML = "";
+  PIPELINE_STEPS.forEach((step, i) => {
+    const node = document.createElement("div");
+    node.className = "node rounded-xl px-4 py-3.5 min-w-[118px] flex-1 flex flex-col items-center gap-2 text-center";
+    node.id = `node-${i}`;
+    node.innerHTML = `
+      <span class="node-dot w-2 h-2 rounded-full bg-neutral-600"></span>
+      <span class="text-[11px] font-medium text-neutral-300 leading-tight">${step}</span>
+      <span class="text-[9px] font-mono text-neutral-600">0${i + 1}</span>`;
+    container.appendChild(node);
+    if (i < PIPELINE_STEPS.length - 1) {
+      const conn = document.createElement("div");
+      conn.className = "connector self-center shrink-0 h-px w-6 sm:w-9 mx-1";
+      container.appendChild(conn);
+    }
+  });
+}
+
+function setPipelineState(activeIndex) {
+  PIPELINE_STEPS.forEach((_, i) => {
+    const node = el(`node-${i}`);
+    node.classList.remove("active", "done");
+    if (activeIndex === "all-done") node.classList.add("done");
+    else if (typeof activeIndex === "number") {
+      if (i < activeIndex) node.classList.add("done");
+      if (i === activeIndex) node.classList.add("active");
+    }
+  });
+}
+
+let pipelineTimer = null;
+function animatePipeline() {
+  let i = 0;
+  setPipelineState(0);
+  pipelineTimer = setInterval(() => {
+    i = (i + 1) % PIPELINE_STEPS.length;
+    setPipelineState(i);
+  }, 900);
+}
+function stopPipeline(success) {
+  clearInterval(pipelineTimer);
+  setPipelineState(success ? "all-done" : null);
+}
+
+// ---------- Helpers ----------
+async function sha256Hex(text) {
+  const data = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function uniqueRefChips(refs) {
+  const seen = new Set();
+  refs.forEach((r) =>
+    String(r)
+      .replace(/[\[\]'"]/g, "")
+      .split(/[|,;]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .forEach((s) => seen.add(s))
+  );
+  return [...seen];
+}
+
+function cleanRefs(s) {
+  return String(s).replace(/[\[\]'"]/g, "").trim();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+}
+
+// ---------- Rendering results ----------
+function renderResults(data) {
+  el("results").classList.remove("hidden");
+
+  // A. Classification
+  const pending = data.predicted_label === "PENDING_CLASSIFICATION_MODEL";
+  el("out-label").textContent = data.predicted_label;
+  el("out-confidence").textContent = (data.classification_confidence ?? 0).toFixed(2);
+  el("out-status").textContent = data.human_review_required ? "Human Review Required" : "Pending";
+  el("out-pending-note").classList.toggle("hidden", !pending);
+
+  // B. RG refs chips
+  const refsBox = el("out-refs");
+  refsBox.innerHTML = "";
+  const chips = uniqueRefChips(data.retrieved_rg_refs || []);
+  if (chips.length === 0) {
+    refsBox.innerHTML = '<span class="text-xs text-neutral-500">No references returned</span>';
+  }
+  chips.forEach((ref) => {
+    const span = document.createElement("span");
+    span.className = "chip rounded-full px-3.5 py-1.5 text-xs font-mono text-white";
+    span.textContent = ref;
+    refsBox.appendChild(span);
+  });
+
+  // C. Context cards
+  const ctxBox = el("out-context");
+  ctxBox.innerHTML = "";
+  (data.retrieved_context || []).forEach((item) => {
+    const d = document.createElement("details");
+    d.className = "rounded-xl border border-white/10 bg-black/30 overflow-hidden";
+    d.innerHTML = `
+      <summary class="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.04] transition-colors">
+        <span class="shrink-0 w-8 h-8 rounded-lg border border-white/15 flex items-center justify-center font-mono text-xs text-white">#${item.final_rank}</span>
+        <span class="flex-1 min-w-0">
+          <span class="block text-sm font-medium text-neutral-100 truncate">${escapeHtml(item.title || "Untitled chunk")}</span>
+          <span class="block text-[11px] text-neutral-500 font-mono mt-0.5 truncate">
+            ${escapeHtml(cleanRefs(item.rg_refs))} · ${escapeHtml(item.chunk_type)} · dist ${Number(item.distance).toFixed(4)}
+          </span>
+        </span>
+        <span class="expand-icon shrink-0 text-neutral-500 text-lg leading-none">+</span>
+      </summary>
+      <div class="px-5 pb-5 pt-1 border-t border-white/[0.06]">
+        <div class="flex flex-wrap gap-2 mb-3 text-[10px] font-mono text-neutral-400">
+          <span class="chip rounded px-2 py-0.5">query: ${escapeHtml(item.query_name)}</span>
+          <span class="chip rounded px-2 py-0.5">type: ${escapeHtml(item.chunk_type)}</span>
+          <span class="chip rounded px-2 py-0.5">distance: ${Number(item.distance).toFixed(4)}</span>
+        </div>
+        <p class="text-xs leading-relaxed text-neutral-300 whitespace-pre-wrap">${escapeHtml(item.text_preview)}…</p>
+      </div>`;
+    ctxBox.appendChild(d);
+  });
+
+  // D. Handling note
+  el("out-note").textContent = data.handling_note || "";
+  el("memo-date").textContent = "DATE: " + (data.received_at || "").slice(0, 19).replace("T", " ") + " UTC";
+
+  // Audit panel
+  el("audit-ts").textContent = data.received_at || "—";
+  el("audit-preview").textContent = data.input_preview || "—";
+  el("audit-dot").className = "w-1.5 h-1.5 rounded-full bg-white animate-pulse";
+  el("audit-status-text").textContent = "Event appended to api_audit_log.csv";
+
+  el("results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ---------- Analyze flow ----------
+async function analyze() {
+  const text = el("complaint-input").value.trim();
+  const errBox = el("error-banner");
+  errBox.classList.add("hidden");
+
+  if (text.length < 20) {
+    errBox.textContent = "Please enter a complaint narrative of at least 20 characters.";
+    errBox.classList.remove("hidden");
+    return;
+  }
+
+  const btn = el("btn-analyze");
+  btn.disabled = true;
+  btn.textContent = "Analyzing…";
+  btn.classList.add("shimmer");
+  animatePipeline();
+
+  sha256Hex(text).then((h) => (el("audit-hash").textContent = h));
+  el("audit-dot").className = "w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse";
+  el("audit-status-text").textContent = "Analysis in progress…";
+
+  try {
+    const res = await fetch(`${API_BASE}/analyze-complaint`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ complaint_text: text, customer_id: "demo_customer_001" }),
+    });
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(`API error ${res.status}: ${detail.slice(0, 300)}`);
+    }
+    const data = await res.json();
+    stopPipeline(true);
+    renderResults(data);
+  } catch (err) {
+    stopPipeline(false);
+    el("audit-dot").className = "w-1.5 h-1.5 rounded-full bg-neutral-600";
+    el("audit-status-text").textContent = "Request failed — no event logged";
+    errBox.innerHTML =
+      `<span class="font-semibold text-white">Could not reach the analysis API.</span><br/>` +
+      `<span class="text-neutral-400 text-xs">${escapeHtml(err.message)}. ` +
+      `Make sure the FastAPI backend is running at ${API_BASE} ` +
+      `(uvicorn src.api.main:app --port 8000) and CORS is enabled.</span>`;
+    errBox.classList.remove("hidden");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Analyze Complaint";
+    btn.classList.remove("shimmer");
+  }
+}
+
+// ---------- 3D card tilt ----------
+if (window.matchMedia("(hover: hover)").matches) {
+  document.querySelectorAll(".tilt").forEach((card) => {
+    card.addEventListener("mousemove", (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform =
+        `perspective(1100px) rotateX(${(-py * 4).toFixed(2)}deg) rotateY(${(px * 5).toFixed(2)}deg) translateZ(8px)`;
+      card.style.setProperty("--mx", `${((px + 0.5) * 100).toFixed(1)}%`);
+      card.style.setProperty("--my", `${((py + 0.5) * 100).toFixed(1)}%`);
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
+
+// ---------- Wire up ----------
+renderPipeline();
+el("btn-analyze").addEventListener("click", analyze);
+el("btn-sample").addEventListener("click", () => {
+  el("complaint-input").value = SAMPLE_COMPLAINT;
+  el("complaint-input").focus();
+});
+</script>
+</body>
+</html>
