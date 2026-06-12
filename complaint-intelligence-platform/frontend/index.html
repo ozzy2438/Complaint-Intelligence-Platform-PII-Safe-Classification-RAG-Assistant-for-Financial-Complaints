@@ -302,8 +302,8 @@
                 <p id="out-status" class="text-sm text-neutral-200">—</p>
               </div>
             </div>
-            <p id="out-pending-note" class="hidden mt-4 text-xs text-neutral-400 border border-white/10 rounded-lg px-3 py-2 bg-black/30">
-              Classification model connection pending
+            <p id="out-pending-note" class="hidden mt-4 text-xs text-neutral-400 border border-white/10 rounded-lg px-3 py-2 bg-black/30 leading-relaxed">
+              The classification model is not connected in this demo. Retrieval and RG 271 grounding are live; label and confidence are populated once the classifier is integrated.
             </p>
           </div>
 
@@ -496,9 +496,20 @@ function renderResults(data) {
 
   // A. Classification
   const pending = data.predicted_label === "PENDING_CLASSIFICATION_MODEL";
-  el("out-label").textContent = data.predicted_label;
-  el("out-confidence").textContent = (data.classification_confidence ?? 0).toFixed(2);
-  el("out-status").textContent = data.human_review_required ? "Human Review Required" : "Pending";
+  el("out-label").textContent = pending
+    ? "RAG demo mode — classification not connected"
+    : data.predicted_label;
+  el("out-label").classList.toggle("text-lg", !pending);
+  el("out-label").classList.toggle("text-white", !pending);
+  el("out-label").classList.toggle("text-sm", pending);
+  el("out-label").classList.toggle("text-neutral-300", pending);
+  el("out-label").classList.toggle("font-mono", !pending);
+  el("out-confidence").textContent = pending
+    ? "n/a"
+    : (data.classification_confidence ?? 0).toFixed(2);
+  el("out-status").textContent = pending
+    ? "Classification model integration pending"
+    : (data.human_review_required ? "Human Review Required" : "Reviewed");
   el("out-pending-note").classList.toggle("hidden", !pending);
 
   // B. RG refs chips
@@ -526,17 +537,18 @@ function renderResults(data) {
         <span class="shrink-0 w-8 h-8 rounded-lg border border-white/15 flex items-center justify-center font-mono text-xs text-white">#${item.final_rank}</span>
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium text-neutral-100 truncate">${escapeHtml(item.title || "Untitled chunk")}</span>
-          <span class="block text-[11px] text-neutral-500 font-mono mt-0.5 truncate">
-            ${escapeHtml(cleanRefs(item.rg_refs))} · ${escapeHtml(item.chunk_type)} · dist ${Number(item.distance).toFixed(4)}
+          <span class="block text-[11px] text-neutral-400 font-mono mt-0.5 truncate">
+            ${escapeHtml(cleanRefs(item.rg_refs))} · ${escapeHtml(item.chunk_type)}
           </span>
         </span>
+        <span class="shrink-0 text-[10px] font-mono text-neutral-600" title="Vector match distance (lower = closer)">match ${Number(item.distance).toFixed(3)}</span>
         <span class="expand-icon shrink-0 text-neutral-500 text-lg leading-none">+</span>
       </summary>
       <div class="px-5 pb-5 pt-1 border-t border-white/[0.06]">
         <div class="flex flex-wrap gap-2 mb-3 text-[10px] font-mono text-neutral-400">
           <span class="chip rounded px-2 py-0.5">query: ${escapeHtml(item.query_name)}</span>
           <span class="chip rounded px-2 py-0.5">type: ${escapeHtml(item.chunk_type)}</span>
-          <span class="chip rounded px-2 py-0.5">distance: ${Number(item.distance).toFixed(4)}</span>
+          <span class="chip rounded px-2 py-0.5 text-neutral-500">match distance: ${Number(item.distance).toFixed(4)}</span>
         </div>
         <p class="text-xs leading-relaxed text-neutral-300 whitespace-pre-wrap">${escapeHtml(item.text_preview)}…</p>
       </div>`;
